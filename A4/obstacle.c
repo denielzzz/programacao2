@@ -12,4 +12,9 @@ void obstacle_init(obstacle_t *obstacle)
 
 void obstacle_update(obstacle_t *obstacle)
 {
+    for(int i = 0; i < OBSTACLE_N; i++)
+    {
+        if(obstacle[i].life <= 0)
+            obstacle[i].life = 0;
+    }
 }

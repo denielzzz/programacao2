@@ -6,6 +6,8 @@
 #define ENEMY_LINES 5
 #define ENEMY_COLUNS 11
 
+#define ENEMY_SPEED BUFFER_W/32
+
 typedef enum enemy_type
 {
     WEAK_ENEMY = 0,

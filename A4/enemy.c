@@ -10,7 +10,7 @@ void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
             enemy[i][j].x = BUFFER_W/7 + (j+1) * BUFFER_W/ENEMY_COLUNS*2/3;
             enemy[i][j].y = BUFFER_H/20 + (i+1) * BUFFER_H/ENEMY_LINES/3;
             enemy[i][j].alive = 1;
-            enemy[i][j].dx = BUFFER_W/32;
+            enemy[i][j].dx = ENEMY_SPEED;
         }
     }
 }

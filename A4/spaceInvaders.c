@@ -9,6 +9,7 @@
 #include "enemy.h"
 #include "obstacle.h"
 #include "shot.h"
+#include "sprites.h"
 
 void must_init(bool test, const char *description)
 {
@@ -107,6 +108,9 @@ int main()
     shot_t ship_shot;
     shot_init(&ship_shot);
 
+    sprites_t sprites;
+    sprites_init(&sprites);
+
     ALLEGRO_EVENT event;
     ALLEGRO_KEYBOARD_STATE key;
     bool done = false;
@@ -172,6 +176,7 @@ int main()
             redraw = false;
         }
     }
+    sprites_deinit(&sprites);
     al_destroy_bitmap(buffer);
     al_destroy_display(disp);
     al_destroy_timer(timer);
