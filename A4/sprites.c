@@ -17,17 +17,19 @@ ALLEGRO_BITMAP *sprite_get(ALLEGRO_BITMAP *sprites, int x, int y, int w, int h)
 
 void sprites_init(sprites_t *sprites)
 {
-    sprites->sheet = al_load_bitmap("spritesheet.png");
-    printf("spritesheet: %p\n", (void *)sprites->sheet);
-    printf("spritesheet: %p\n", (void *)sprites->sheet);
-    printf("spritesheet: %p\n", (void *)sprites->sheet);
+    if(!(al_init_image_addon()))
+    {
+        fprintf(stderr, "Error initializing image addon\n");
+        exit(1);
+    }
+    sprites->sheet = al_load_bitmap("./sprites/spritesheet.png");
     if(!sprites->sheet)
     {
         fprintf(stderr, "Error loading spritesheet\n");
         exit(1);
     }
 
-    sprites->ship = sprite_get(sprites->sheet, 200, 12, 15, 7);
+    sprites->ship = sprite_get(sprites->sheet, 200, 12, 15, 9);
     // sprites->life = sprite_get(sprites->sheet, 32, 0, 32, 32);
 
     // sprites->waek_enemy[0] = sprite_get(sprites->sheet, 0, 32, 32, 32);
@@ -53,11 +55,11 @@ void sprites_init(sprites_t *sprites)
     // sprites->strong_enemy_shot[2] = sprite_get(sprites->sheet, 64, 224, 32, 32);
     // sprites->strong_enemy_shot[3] = sprite_get(sprites->sheet, 96, 224, 32, 32);
 
-    // sprites->obstacle[0] = sprite_get(sprites->sheet, 0, 256, 32, 32);
-    // sprites->obstacle[1] = sprite_get(sprites->sheet, 32, 256, 32, 32);
-    // sprites->obstacle[2] = sprite_get(sprites->sheet, 64, 256, 32, 32);
-    // sprites->obstacle[3] = sprite_get(sprites->sheet, 96, 256, 32, 32);
-    // sprites->obstacle[4] = sprite_get(sprites->sheet, 128, 256, 32, 32);
+    sprites->obstacle[0] = sprite_get(sprites->sheet, 288, 0, 23, 17);
+    sprites->obstacle[1] = sprite_get(sprites->sheet, 320, 0, 23, 17);
+    sprites->obstacle[2] = sprite_get(sprites->sheet, 288, 32, 23, 17);
+    sprites->obstacle[3] = sprite_get(sprites->sheet, 320, 32, 23, 17);
+    sprites->obstacle[4] = sprite_get(sprites->sheet, 288, 64, 23, 17);
 
     // sprites->enemy_explosion[0] = sprite_get(sprites->sheet, 0, 288, 32, 32);
     // sprites->enemy_explosion[1] = sprite_get(sprites->sheet, 32, 288, 32, 32);

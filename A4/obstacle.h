@@ -1,7 +1,7 @@
 #include "config.h"
 
-#define OBSTACLE_W 30
-#define OBSTACLE_H 25
+#define OBSTACLE_W 32
+#define OBSTACLE_H 16
 #define OBSTACLE_LIFE 10
 #define OBSTACLE_N 4
 

@@ -20,9 +20,9 @@ void must_init(bool test, const char *description)
     exit(1);
 }
 
-void ship_draw(ship_t *ship)
+void ship_draw(ship_t *ship, sprites_t *sprites)
 {
-    al_draw_filled_rectangle(ship->x - SHIP_W/2, ship->y - SHIP_H/2, ship->x + SHIP_W/2, ship->y + SHIP_H/2, al_map_rgb(255,255,255));
+    al_draw_bitmap(sprites->ship, ship->x - SHIP_W/2, ship->y - SHIP_H/2, 0);
 }
 
 void stars_draw(STAR* stars)
@@ -52,13 +52,20 @@ void enemies_draw(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
     }
 }
 
-void obstacle_draw(obstacle_t *obstacle)
+void obstacle_draw(obstacle_t *obstacle, sprites_t *sprites)
 {
     for(int i = 0; i < OBSTACLE_N; i++)
     {
-        al_draw_filled_rectangle(obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, obstacle[i].x - OBSTACLE_W/5, obstacle[i].y + OBSTACLE_H/2, al_map_rgb(255,255,255));
-        al_draw_filled_rectangle(obstacle[i].x + OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, obstacle[i].x + OBSTACLE_W/5, obstacle[i].y + OBSTACLE_H/2, al_map_rgb(255,255,255));
-        al_draw_filled_rectangle(obstacle[i].x - OBSTACLE_W/5, obstacle[i].y - OBSTACLE_H/2, obstacle[i].x + OBSTACLE_W/5, obstacle[i].y, al_map_rgb(255,255,255));
+        if(obstacle[i].life == 10 || obstacle[i].life == 9)
+            al_draw_bitmap(sprites->obstacle[0], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+        else if(obstacle[i].life == 8 || obstacle[i].life == 7)
+            al_draw_bitmap(sprites->obstacle[1], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+        else if(obstacle[i].life == 6 || obstacle[i].life == 5)
+            al_draw_bitmap(sprites->obstacle[2], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+        else if(obstacle[i].life == 4 || obstacle[i].life == 3)
+            al_draw_bitmap(sprites->obstacle[3], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+        else if(obstacle[i].life == 2 || obstacle[i].life == 1)
+            al_draw_bitmap(sprites->obstacle[4], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
     }
 }
 
@@ -166,9 +173,9 @@ int main()
 
             stars_draw(stars);
             shot_draw(&ship_shot);
-            ship_draw(&ship);
+            ship_draw(&ship, &sprites);
             enemies_draw(enemy);
-            obstacle_draw(obstacle);
+            obstacle_draw(obstacle, &sprites);
 
             al_set_target_backbuffer(disp);
             al_draw_scaled_bitmap(buffer, 0, 0, BUFFER_W, BUFFER_H, 0, 0, DISP_W, DISP_H, 0);

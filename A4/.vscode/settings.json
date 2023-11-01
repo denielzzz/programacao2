@@ -6,6 +6,7 @@
         "stdio.h": "c",
         "util.h": "c",
         "obstacle.h": "c",
-        "allegro_font.h": "c"
+        "allegro_font.h": "c",
+        "allegro.h": "c"
     }
 }

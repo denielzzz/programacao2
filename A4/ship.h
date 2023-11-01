@@ -1,9 +1,9 @@
 #include "config.h"
 
 #define SHIP_SPEED 2
-#define SHIP_Y (BUFFER_H - BUFFER_H / 12)
-#define SHIP_W (BUFFER_W / 18)
-#define SHIP_H (BUFFER_H / 36)
+#define SHIP_Y (BUFFER_H - BUFFER_H / 11)
+#define SHIP_W 15
+#define SHIP_H 8
 
 typedef struct ship
 {
