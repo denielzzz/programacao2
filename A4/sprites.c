@@ -32,28 +32,28 @@ void sprites_init(sprites_t *sprites)
     sprites->ship = sprite_get(sprites->sheet, 200, 12, 15, 9);
     // sprites->life = sprite_get(sprites->sheet, 32, 0, 32, 32);
 
-    // sprites->waek_enemy[0] = sprite_get(sprites->sheet, 0, 32, 32, 32);
-    // sprites->waek_enemy[1] = sprite_get(sprites->sheet, 32, 32, 32, 32);
+    sprites->strong_enemy[0] = sprite_get(sprites->sheet, 128, 0, 8, 8);
+    sprites->strong_enemy[1] = sprite_get(sprites->sheet, 128, 32, 8, 8);
 
-    // sprites->medium_enemy[0] = sprite_get(sprites->sheet, 0, 64, 32, 32);
-    // sprites->medium_enemy[1] = sprite_get(sprites->sheet, 32, 64, 32, 32);
+    sprites->medium_enemy[0] = sprite_get(sprites->sheet, 459, 7, 11, 8);
+    sprites->medium_enemy[1] = sprite_get(sprites->sheet, 459, 39, 11, 8);
 
-    // sprites->strong_enemy[0] = sprite_get(sprites->sheet, 0, 96, 32, 32);
-    // sprites->strong_enemy[1] = sprite_get(sprites->sheet, 32, 96, 32, 32);
+    sprites->weak_enemy[0] = sprite_get(sprites->sheet, 32, 0, 12, 8);
+    sprites->weak_enemy[1] = sprite_get(sprites->sheet, 32, 32, 12, 8);
 
     // sprites->mother_ship = sprite_get(sprites->sheet, 0, 128, 32, 32);
 
-    // sprites->waek_enemy_shot[0] = sprite_get(sprites->sheet, 0, 160, 32, 32);
-    // sprites->waek_enemy_shot[1] = sprite_get(sprites->sheet, 32, 160, 32, 32);
-    // sprites->waek_enemy_shot[2] = sprite_get(sprites->sheet, 64, 160, 32, 32);
+    sprites->weak_enemy_shot[0] = sprite_get(sprites->sheet, 352, 0, 3, 5);
+    sprites->weak_enemy_shot[1] = sprite_get(sprites->sheet, 384, 0, 3, 5);
+    sprites->weak_enemy_shot[2] = sprite_get(sprites->sheet, 352, 32, 3, 5);
 
-    // sprites->medium_enemy_shot[0] = sprite_get(sprites->sheet, 0, 192, 32, 32);
-    // sprites->medium_enemy_shot[1] = sprite_get(sprites->sheet, 32, 192, 32, 32);
+    sprites->medium_enemy_shot[0] = sprite_get(sprites->sheet, 0, 0, 3, 5);
+    sprites->medium_enemy_shot[1] = sprite_get(sprites->sheet, 0, 32, 3, 5);
 
-    // sprites->strong_enemy_shot[0] = sprite_get(sprites->sheet, 0, 224, 32, 32);
-    // sprites->strong_enemy_shot[1] = sprite_get(sprites->sheet, 32, 224, 32, 32);
-    // sprites->strong_enemy_shot[2] = sprite_get(sprites->sheet, 64, 224, 32, 32);
-    // sprites->strong_enemy_shot[3] = sprite_get(sprites->sheet, 96, 224, 32, 32);
+    sprites->strong_enemy_shot[0] = sprite_get(sprites->sheet, 65, 0, 3, 5);
+    sprites->strong_enemy_shot[1] = sprite_get(sprites->sheet, 96, 0, 3, 5);
+    sprites->strong_enemy_shot[2] = sprite_get(sprites->sheet, 65, 32, 3, 5);
+    sprites->strong_enemy_shot[3] = sprite_get(sprites->sheet, 98, 32, 3, 5);
 
     sprites->obstacle[0] = sprite_get(sprites->sheet, 288, 0, 23, 17);
     sprites->obstacle[1] = sprite_get(sprites->sheet, 320, 0, 23, 17);
@@ -77,19 +77,18 @@ void sprites_deinit(sprites_t *sprites)
     al_destroy_bitmap(sprites->sheet);
 
     al_destroy_bitmap(sprites->ship);
-    // al_destroy_bitmap(sprites->life);
 
-    // al_destroy_bitmap(sprites->waek_enemy[0]);
-    // al_destroy_bitmap(sprites->waek_enemy[1]);
-    // al_destroy_bitmap(sprites->medium_enemy[0]);
-    // al_destroy_bitmap(sprites->medium_enemy[1]);
-    // al_destroy_bitmap(sprites->strong_enemy[0]);
-    // al_destroy_bitmap(sprites->strong_enemy[1]);
+    al_destroy_bitmap(sprites->weak_enemy[0]);
+    al_destroy_bitmap(sprites->weak_enemy[1]);
+    al_destroy_bitmap(sprites->medium_enemy[0]);
+    al_destroy_bitmap(sprites->medium_enemy[1]);
+    al_destroy_bitmap(sprites->strong_enemy[0]);
+    al_destroy_bitmap(sprites->strong_enemy[1]);
     // al_destroy_bitmap(sprites->mother_ship);
 
-    // al_destroy_bitmap(sprites->waek_enemy_shot[0]);
-    // al_destroy_bitmap(sprites->waek_enemy_shot[1]);
-    // al_destroy_bitmap(sprites->waek_enemy_shot[2]);
+    // al_destroy_bitmap(sprites->weak_enemy_shot[0]);
+    // al_destroy_bitmap(sprites->weak_enemy_shot[1]);
+    // al_destroy_bitmap(sprites->weak_enemy_shot[2]);
     // al_destroy_bitmap(sprites->medium_enemy_shot[0]);
     // al_destroy_bitmap(sprites->medium_enemy_shot[1]);
     // al_destroy_bitmap(sprites->strong_enemy_shot[0]);

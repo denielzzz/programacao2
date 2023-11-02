@@ -22,7 +22,7 @@ void must_init(bool test, const char *description)
 
 void ship_draw(ship_t *ship, sprites_t *sprites)
 {
-    al_draw_bitmap(sprites->ship, ship->x - SHIP_W/2, ship->y - SHIP_H/2, 0);
+    al_draw_scaled_bitmap(sprites->ship, 0, 0, 15, 9, ship->x - SHIP_W/2, ship->y - SHIP_H/2, SHIP_W, SHIP_H, 0);
 }
 
 void stars_draw(STAR* stars)
@@ -36,18 +36,21 @@ void stars_draw(STAR* stars)
     }
 }
 
-void enemies_draw(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
+void enemies_draw(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], sprites_t *sprites)
 {   
     for(int i = 0; i < ENEMY_LINES; i++)
     {
         for(int j = 0; j < ENEMY_COLUNS; j++)
         {
-            if(enemy[i][j].type == WEAK_ENEMY)
-                al_draw_filled_rectangle(enemy[i][j].x - ENEMY_W/2, enemy[i][j].y - ENEMY_H/2, enemy[i][j].x + ENEMY_W/2, enemy[i][j].y + ENEMY_H/2, al_map_rgb(255,0,0));
+            if(!enemy[i][j].alive)
+                continue;
+
+            if(enemy[i][j].type == STRONG_ENEMY)
+                al_draw_scaled_bitmap(sprites->strong_enemy[enemy[i][j].frame], 0, 0, 8, 8, enemy[i][j].x - ENEMY_W*3/7, enemy[i][j].y - ENEMY_H/2, 9, ENEMY_H, 0);
             else if(enemy[i][j].type == MEDIUM_ENEMY)
-                al_draw_filled_rectangle(enemy[i][j].x - ENEMY_W/2, enemy[i][j].y - ENEMY_H/2, enemy[i][j].x + ENEMY_W/2, enemy[i][j].y + ENEMY_H/2, al_map_rgb(0,255,0));
-            else if(enemy[i][j].type == STRONG_ENEMY)
-                al_draw_filled_rectangle(enemy[i][j].x - ENEMY_W/2, enemy[i][j].y - ENEMY_H/2, enemy[i][j].x + ENEMY_W/2, enemy[i][j].y + ENEMY_H/2, al_map_rgb(0,0,255));
+                al_draw_bitmap(sprites->medium_enemy[enemy[i][j].frame], enemy[i][j].x - ENEMY_W/2, enemy[i][j].y - ENEMY_H/2, 0);
+            else if(enemy[i][j].type == WEAK_ENEMY)
+                al_draw_bitmap(sprites->weak_enemy[enemy[i][j].frame], enemy[i][j].x - ENEMY_W/2, enemy[i][j].y - ENEMY_H/2, 0);
         }
     }
 }
@@ -57,21 +60,35 @@ void obstacle_draw(obstacle_t *obstacle, sprites_t *sprites)
     for(int i = 0; i < OBSTACLE_N; i++)
     {
         if(obstacle[i].life == 10 || obstacle[i].life == 9)
-            al_draw_bitmap(sprites->obstacle[0], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+            al_draw_scaled_bitmap(sprites->obstacle[0], 0, 0, 23, 17, obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, OBSTACLE_W, OBSTACLE_H, 0);
         else if(obstacle[i].life == 8 || obstacle[i].life == 7)
-            al_draw_bitmap(sprites->obstacle[1], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+            al_draw_scaled_bitmap(sprites->obstacle[1], 0, 0, 23, 17, obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, OBSTACLE_W, OBSTACLE_H, 0);
         else if(obstacle[i].life == 6 || obstacle[i].life == 5)
-            al_draw_bitmap(sprites->obstacle[2], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+            al_draw_scaled_bitmap(sprites->obstacle[2], 0, 0, 23, 17, obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, OBSTACLE_W, OBSTACLE_H, 0);
         else if(obstacle[i].life == 4 || obstacle[i].life == 3)
-            al_draw_bitmap(sprites->obstacle[3], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+            al_draw_scaled_bitmap(sprites->obstacle[3], 0, 0, 23, 17, obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, OBSTACLE_W, OBSTACLE_H, 0);
         else if(obstacle[i].life == 2 || obstacle[i].life == 1)
-            al_draw_bitmap(sprites->obstacle[4], obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, 0);
+            al_draw_scaled_bitmap(sprites->obstacle[4], 0, 0, 23, 17, obstacle[i].x - OBSTACLE_W/2, obstacle[i].y - OBSTACLE_H/2, OBSTACLE_W, OBSTACLE_H, 0);
+
     }
 }
 
-void shot_draw(shot_t *shot)
+void shot_draw(shot_t *shot, sprites_t *sprites)
 {
-    al_draw_filled_rectangle(shot->x - SHOT_W/2, shot->y - SHOT_H/2, shot->x + SHOT_W/2, shot->y + SHOT_H/2, al_map_rgb(255,255,255));
+    for(int i = 0; i < 2; i++)
+    {
+        if(!shot[i].alive)
+            continue;
+        
+        if(shot[i].frames == SHIP_SHOT)
+            al_draw_filled_rectangle(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, al_map_rgb(255,255,255));
+        else if(shot[i].frames == MEDIUM_SHOT)
+            al_draw_bitmap(sprites->medium_enemy_shot[shot[i].frame/5], shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
+        else if(shot[i].frames == WEAK_SHOT)
+            al_draw_bitmap(sprites->weak_enemy_shot[shot[i].frame/5], shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
+        else if(shot[i].frames == STRONG_SHOT)
+            al_draw_bitmap(sprites->strong_enemy_shot[shot[i].frame/5], shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
+    }
 }
 
 int main()
@@ -112,8 +129,11 @@ int main()
     obstacle_t obstacle[OBSTACLE_N];
     obstacle_init(obstacle);
 
-    shot_t ship_shot;
-    shot_init(&ship_shot);
+    shot_t ship_shot[2];
+    ship_shot_init(ship_shot);
+
+    shot_t enemy_shot[2];
+    enemy_shot_init(enemy_shot);
 
     sprites_t sprites;
     sprites_init(&sprites);
@@ -128,6 +148,7 @@ int main()
 
     while(1)
     {
+        cont++;
         al_wait_for_event(queue, &event);
 
         switch(event.type)
@@ -144,17 +165,32 @@ int main()
                     ship.dx = SHIP_SPEED;
                 else
                     ship.dx = 0;
-                if(al_key_down(&key, ALLEGRO_KEY_SPACE))
-                    shot_fire(&ship_shot, ship.x, ship.y);
+                if(al_key_down(&key, ALLEGRO_KEY_SPACE) && !ship.shot_cooldown && !ship.shot_timer)
+                    ship_shot_fire(ship_shot, &ship, SHOT_N-1);
+                else if(al_key_down(&key, ALLEGRO_KEY_SPACE) && !ship.shot_cooldown && ship.shot_timer)
+                    ship_shot_fire(ship_shot, &ship, SHOT_N);
 
-                cont++;
+                if(cont % ((rand() % 2*FPS) + 10) == 0)
+                {
+                    while(1)
+                    {
+                        int x = rand() % ENEMY_LINES;
+                        int y = rand() % ENEMY_COLUNS;
+                        if(!enemy[x][y].alive)
+                            continue;
+                        enemy_shot_fire(enemy_shot, enemy, x, y);
+                        break;
+                    }
+                }
+
 
                 stars_update(stars);
-                if(cont % 45 == 0)
+                if(cont % 30 == 0)
                     enemies_update(enemy);
                 ship_update(&ship);
                 obstacle_update(obstacle);
-                shot_update(&ship_shot);
+                shot_update(ship_shot);
+                shot_update(enemy_shot);
 
                 redraw = true;
                 break;
@@ -172,9 +208,10 @@ int main()
             al_clear_to_color(al_map_rgb(10,10,10));
 
             stars_draw(stars);
-            shot_draw(&ship_shot);
+            shot_draw(ship_shot, &sprites);
+            shot_draw(enemy_shot, &sprites);
             ship_draw(&ship, &sprites);
-            enemies_draw(enemy);
+            enemies_draw(enemy, &sprites);
             obstacle_draw(obstacle, &sprites);
 
             al_set_target_backbuffer(disp);

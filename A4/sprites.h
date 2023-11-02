@@ -8,12 +8,12 @@ typedef struct sprites
     ALLEGRO_BITMAP *ship;
     ALLEGRO_BITMAP *life;
 
-    ALLEGRO_BITMAP *waek_enemy[2];
+    ALLEGRO_BITMAP *weak_enemy[2];
     ALLEGRO_BITMAP *medium_enemy[2];
     ALLEGRO_BITMAP *strong_enemy[2];
     ALLEGRO_BITMAP *mother_ship;
 
-    ALLEGRO_BITMAP *waek_enemy_shot[3];
+    ALLEGRO_BITMAP *weak_enemy_shot[3];
     ALLEGRO_BITMAP *medium_enemy_shot[2];
     ALLEGRO_BITMAP *strong_enemy_shot[4];
 
