@@ -1,3 +1,6 @@
+#ifndef OBSTACLE_LIB
+#define OBSTACLE_LIB
+
 #include "config.h"
 
 #define OBSTACLE_W 28
@@ -17,3 +20,5 @@ typedef struct obstacle
 void obstacle_init(obstacle_t *obstacle);
 
 void obstacle_update(obstacle_t *obstacle);
+
+#endif

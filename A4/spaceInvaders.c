@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 #include "config.h"
 #include "ship.h"
@@ -22,7 +24,20 @@ void must_init(bool test, const char *description)
 
 void ship_draw(ship_t *ship, sprites_t *sprites)
 {
-    al_draw_scaled_bitmap(sprites->ship, 0, 0, 15, 9, ship->x - SHIP_W/2, ship->y - SHIP_H/2, SHIP_W, SHIP_H, 0);
+    if(ship->lives == 0 && ship->respawn_timer > 0)
+    {
+        if(ship->frame/5 == 2)
+            ship->frame = 0;
+        al_draw_bitmap(sprites->ship_explosion[ship->frame/5], ship->x - SHIP_W/2, ship->y - SHIP_H/2, 0);
+        ship->frame++;
+        return;
+    }
+    if(ship->lives == 0 || ship->invincible_timer/2%3 == 1)
+        return;
+    
+    al_draw_bitmap(sprites->ship, ship->x - SHIP_W/2, ship->y - SHIP_H/2, 0);
+    if(ship->invincible_timer)
+        al_draw_circle(ship->x+0.5, ship->y+2, SHIP_W/3*2, al_map_rgb(65,122,255), 1);
 }
 
 void stars_draw(STAR* stars)
@@ -81,13 +96,25 @@ void shot_draw(shot_t *shot, sprites_t *sprites)
             continue;
         
         if(shot[i].frames == SHIP_SHOT)
-            al_draw_filled_rectangle(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, al_map_rgb(255,255,255));
+            al_draw_filled_rectangle(shot[i].x - SHOT_W/2 + 1, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, al_map_rgb(255,255,255));
         else if(shot[i].frames == MEDIUM_SHOT)
             al_draw_bitmap(sprites->medium_enemy_shot[shot[i].frame/5], shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
         else if(shot[i].frames == WEAK_SHOT)
             al_draw_bitmap(sprites->weak_enemy_shot[shot[i].frame/5], shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
         else if(shot[i].frames == STRONG_SHOT)
             al_draw_bitmap(sprites->strong_enemy_shot[shot[i].frame/5], shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
+    }
+}
+
+void draw_game_over(ship_t *ship, ALLEGRO_FONT *big_font, ALLEGRO_FONT *medium_font, ALLEGRO_FONT *small_font, unsigned long long int cont)
+{
+    al_draw_filled_rectangle(0, 0, BUFFER_W, BUFFER_H, al_map_rgba(1,1,1,80));
+    al_draw_text(big_font, al_map_rgb(255,255,255), BUFFER_W/2, BUFFER_H/5, ALLEGRO_ALIGN_CENTER, "GAME OVER");
+    al_draw_textf(medium_font, al_map_rgb(255,255,255), BUFFER_W/2, BUFFER_H/2 + 20, ALLEGRO_ALIGN_CENTER, "SCORE: %d", ship->score);
+    if(cont % 90 < 45)
+    {
+        al_draw_text(small_font, al_map_rgb(255,255,255), BUFFER_W/2, BUFFER_H/2 + 60, ALLEGRO_ALIGN_CENTER, "PRESS ESC TO EXIT OR");
+        al_draw_text(small_font, al_map_rgb(255,255,255), BUFFER_W/2, BUFFER_H/2 + 80, ALLEGRO_ALIGN_CENTER, "SPACE TO PLAY AGAIN");
     }
 }
 
@@ -102,16 +129,26 @@ int main()
     ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
     must_init(queue, "queue");
 
-    al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
-    al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
-
     ALLEGRO_BITMAP* buffer = al_create_bitmap(BUFFER_W, BUFFER_H);
     must_init(buffer, "buffer");
     
     ALLEGRO_DISPLAY* disp = al_create_display(DISP_W, DISP_H);
     must_init(disp, "display");
 
+    must_init(al_init_font_addon(), "image");
+    must_init(al_init_ttf_addon(), "ttf");;
+
+    ALLEGRO_FONT* big_font = al_load_ttf_font("./fonts/ARCADE_N.TTF", 30, 0);
+    ALLEGRO_FONT* medium_font = al_load_ttf_font("./fonts/ARCADE_N.TTF", 16, 0);
+    ALLEGRO_FONT* small_font = al_load_ttf_font("./fonts/ARCADE_N.TTF", 8, 0);
+    must_init(big_font, "font");
+    must_init(medium_font, "font");
+    must_init(small_font, "font");
+
     must_init(al_init_primitives_addon(), "primitives");
+
+    al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
+    al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -142,7 +179,8 @@ int main()
     ALLEGRO_KEYBOARD_STATE key;
     bool done = false;
     bool redraw = true;
-    int cont = 0;
+    int game_over = 0;
+    unsigned long long int cont = 0;
 
     al_start_timer(timer);
 
@@ -159,38 +197,53 @@ int main()
                 
                 if(al_key_down(&key, ALLEGRO_KEY_ESCAPE))
                     done = true;
-                if(al_key_down(&key, ALLEGRO_KEY_LEFT))
-                    ship.dx = -SHIP_SPEED;
-                else if(al_key_down(&key, ALLEGRO_KEY_RIGHT))
-                    ship.dx = SHIP_SPEED;
-                else
-                    ship.dx = 0;
-                if(al_key_down(&key, ALLEGRO_KEY_SPACE) && !ship.shot_cooldown && !ship.shot_timer)
-                    ship_shot_fire(ship_shot, &ship, SHOT_N-1);
-                else if(al_key_down(&key, ALLEGRO_KEY_SPACE) && !ship.shot_cooldown && ship.shot_timer)
-                    ship_shot_fire(ship_shot, &ship, SHOT_N);
-
-                if(cont % ((rand() % 2*FPS) + 10) == 0)
+                if(ship.lives > 0)
                 {
-                    while(1)
+                    if(al_key_down(&key, ALLEGRO_KEY_LEFT))
+                        ship.dx = -SHIP_SPEED;
+                    else if(al_key_down(&key, ALLEGRO_KEY_RIGHT))
+                        ship.dx = SHIP_SPEED;
+                    else
+                        ship.dx = 0;
+                    if(al_key_down(&key, ALLEGRO_KEY_SPACE) && !ship.shot_cooldown && !ship.double_shot_timer)
+                        ship_shot_fire(ship_shot, &ship, SHOT_N-1);
+                    else if(al_key_down(&key, ALLEGRO_KEY_SPACE) && !ship.shot_cooldown && ship.double_shot_timer)
+                        ship_shot_fire(ship_shot, &ship, SHOT_N);
+
+                    if(cont % ((rand() % 2*FPS) + 10) == 0)
                     {
-                        int x = rand() % ENEMY_LINES;
-                        int y = rand() % ENEMY_COLUNS;
-                        if(!enemy[x][y].alive)
-                            continue;
-                        enemy_shot_fire(enemy_shot, enemy, x, y);
-                        break;
+                        while(1)
+                        {
+                            int x = rand() % ENEMY_LINES;
+                            int y = rand() % ENEMY_COLUNS;
+                            if(!enemy[x][y].alive)
+                                continue;
+                            enemy_shot_fire(enemy_shot, enemy, x, y);
+                            break;
+                        }
                     }
                 }
-
-
-                stars_update(stars);
-                if(cont % 30 == 0)
-                    enemies_update(enemy);
-                ship_update(&ship);
-                obstacle_update(obstacle);
-                shot_update(ship_shot);
-                shot_update(enemy_shot);
+                if(ship.lives > 0 || ship.respawn_timer)
+                {
+                    if(ship.lives == 0 && ship.respawn_timer)
+                        ship.dx = 0;
+                    stars_update(stars);
+                    ship_update(&ship);
+                    if(cont % 30 == 0)
+                        if(enemies_update(enemy))
+                        {
+                            game_over = 1;
+                            ship.lives = 0;
+                        }
+                    shot_update(ship_shot);
+                    shot_update(enemy_shot);
+                    collide_update(ship_shot, enemy, &ship, obstacle);
+                    collide_update(enemy_shot, enemy, &ship, obstacle);
+                    shots_collide(ship_shot, enemy_shot);
+                    obstacle_update(obstacle);
+                }
+                else
+                    game_over = 1;
 
                 redraw = true;
                 break;
@@ -208,11 +261,13 @@ int main()
             al_clear_to_color(al_map_rgb(10,10,10));
 
             stars_draw(stars);
+            ship_draw(&ship, &sprites);
             shot_draw(ship_shot, &sprites);
             shot_draw(enemy_shot, &sprites);
-            ship_draw(&ship, &sprites);
             enemies_draw(enemy, &sprites);
             obstacle_draw(obstacle, &sprites);
+            if(game_over)
+                draw_game_over(&ship, big_font, medium_font, small_font, cont);
 
             al_set_target_backbuffer(disp);
             al_draw_scaled_bitmap(buffer, 0, 0, BUFFER_W, BUFFER_H, 0, 0, DISP_W, DISP_H, 0);
@@ -225,6 +280,9 @@ int main()
     al_destroy_display(disp);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+    al_destroy_font(big_font);
+    al_destroy_font(medium_font);
+    al_destroy_font(small_font);
 
     return 0;
 }

@@ -5,8 +5,8 @@
 
 #define SHIP_SPEED 2
 #define SHIP_Y (BUFFER_H - BUFFER_H / 12)
-#define SHIP_W 20
-#define SHIP_H 10
+#define SHIP_W 19
+#define SHIP_H 9
 
 typedef struct ship
 {
@@ -14,9 +14,10 @@ typedef struct ship
     int lives;
     int respawn_timer;
     int invincible_timer;
-    int shot_timer;
+    int double_shot_timer;
     int shot_cooldown;
     int frame;
+    int score;
 } ship_t;
 
 void ship_init(ship_t *ship);

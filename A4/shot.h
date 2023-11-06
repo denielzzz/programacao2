@@ -1,6 +1,7 @@
 #include "config.h"
 #include "ship.h"
 #include "enemy.h"
+#include "obstacle.h"
 
 #define SHOT_W 2
 #define SHOT_H 5
@@ -33,3 +34,7 @@ void ship_shot_fire(shot_t *shot, ship_t *ship, int shots);
 void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y);
 
 void shot_update(shot_t *shot);
+
+void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], ship_t *ship, obstacle_t *obstacle);
+
+void shots_collide(shot_t *shot, shot_t *shot2);

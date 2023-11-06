@@ -24,10 +24,11 @@ typedef struct enemy
     int x, y, dx;
     int alive;
     int frame;
+    int score;
 } enemy_t;
 
 void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
 
-void enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
+int enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
 
 #endif

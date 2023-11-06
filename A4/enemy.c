@@ -12,12 +12,29 @@ void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
             enemy[i][j].alive = 1;
             enemy[i][j].dx = ENEMY_SPEED;
             enemy[i][j].frame = 0;
+            if(enemy[i][j].type == STRONG_ENEMY)
+                enemy[i][j].score = 40;
+            else if(enemy[i][j].type == MEDIUM_ENEMY)
+                enemy[i][j].score = 20;
+            else if(enemy[i][j].type == WEAK_ENEMY)
+                enemy[i][j].score = 10;
         }
     }
 }
 
-void enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
+int enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
 {   
+    for(int i = 0; i < ENEMY_LINES; i++)
+    {
+        for(int j = 0; j < ENEMY_COLUNS; j++)
+        {
+            if(!enemy[i][j].alive)
+                continue;
+            if(enemy[i][j].y + ENEMY_H/2 >= BUFFER_H*2.9/4)
+                return 1;
+        }
+    }
+
     int coli = 0;
     for(int i = 0; i < ENEMY_LINES; i++)
     {
@@ -41,8 +58,10 @@ void enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
             {
                 enemy[i][j].dx *= -1;
                 enemy[i][j].x += enemy[i][j].dx;
-                enemy[i][j].y += ENEMY_H/2;
+                enemy[i][j].y += ENEMY_H;
+
             }
         }
     }
+    return 0;
 }
