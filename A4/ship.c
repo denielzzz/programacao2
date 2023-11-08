@@ -8,7 +8,7 @@ void ship_init(ship_t *ship)
     ship->dx = 0;
     ship->lives = 3;
     ship->respawn_timer = 0;
-    ship->invincible_timer = 60;
+    ship->invincible_timer = 60000;
     ship->double_shot_timer = 0;
     ship->frame = 0;
     ship->shot_cooldown = 30;

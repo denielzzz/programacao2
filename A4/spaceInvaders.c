@@ -62,8 +62,15 @@ void enemies_draw(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], sprites_t *sprites)
     {
         for(int j = 0; j < ENEMY_COLUNS; j++)
         {
-            if(!enemy[i][j].alive)
+            if(!enemy[i][j].alive && enemy[i][j].frame > 7)
                 continue;
+
+            if(!enemy[i][j].alive)
+            {
+                al_draw_bitmap(sprites->enemy_explosion[enemy[i][j].frame/4], enemy[i][j].x - ENEMY_W/2, enemy[i][j].y - ENEMY_H/2, 0);
+                enemy[i][j].frame++;
+                continue;
+            }
 
             if(enemy[i][j].type == STRONG_ENEMY)
                 al_draw_scaled_bitmap(sprites->strong_enemy[enemy[i][j].frame], 0, 0, 8, 8, enemy[i][j].x - ENEMY_W*3/7, enemy[i][j].y - ENEMY_H/2, 9, ENEMY_H, 0);
@@ -97,8 +104,15 @@ void shot_draw(shot_t *shot, sprites_t *sprites)
 {
     for(int i = 0; i < 2; i++)
     {
-        if(!shot[i].alive)
+        if(!shot[i].alive && shot[i].dead_frame > 5)
             continue;
+
+        if(!shot[i].alive)
+        {
+            al_draw_bitmap(sprites->shot_explosion, shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, 0);
+            shot[i].dead_frame++;
+            continue;
+        }
         
         if(shot[i].frames == SHIP_SHOT)
             al_draw_filled_rectangle(shot[i].x - SHOT_W/2 + 1, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, al_map_rgb(255,255,255));
@@ -132,8 +146,14 @@ void hud_draw(int score, int lives, sprites_t *sprites, ALLEGRO_FONT *small_font
 
 void mothership_draw(enemy_t *mothership, sprites_t *sprites)
 {
-    if(!mothership->alive)
+    if(!mothership->alive && mothership->frame > 7)
         return;
+    if(!mothership->alive)
+    {
+        al_draw_bitmap(sprites->enemy_explosion[mothership->frame/4], mothership->x - ENEMY_W/2, mothership->y - ENEMY_H/2, 0);
+        mothership->frame++;
+        return;
+    }
     al_draw_bitmap(sprites->mother_ship, mothership->x - ENEMY_W/2, mothership->y - ENEMY_H/2, 0);
 }
 
@@ -387,11 +407,11 @@ int main()
                 stars_draw(stars);
                 powerup_draw(&powerup, &sprites);
                 ship_draw(&ship, &sprites, pause);
-                shot_draw(ship_shot, &sprites);
-                shot_draw(enemy_shot, &sprites);
                 enemies_draw(enemy, &sprites);
                 mothership_draw(&mothership, &sprites);
                 obstacle_draw(obstacle, &sprites);
+                shot_draw(enemy_shot, &sprites);
+                shot_draw(ship_shot, &sprites);
                 hud_draw(ship.score, ship.lives, &sprites, small_font);
                 if(pause)
                     pause_draw(big_font, small_font, cont);

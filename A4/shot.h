@@ -24,6 +24,7 @@ typedef struct shot
     int damage;
     shot_frame_type_t frames;
     int frame;
+    int dead_frame;
 } shot_t;
 
 void ship_shot_init(shot_t *shot);

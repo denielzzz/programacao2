@@ -7,6 +7,7 @@ void ship_shot_init(shot_t *shot)
         shot[i].dy = -SHIP_SHOT_SPEED;
         shot[i].alive = 0;
         shot[i].frame = 0;
+        shot[i].dead_frame = 0;
         shot[i].damage = 1;
     }
 }
@@ -17,6 +18,7 @@ void enemy_shot_init(shot_t *shot)
     {
         shot[i].alive = 0;
         shot[i].frame = 0;
+        shot[i].dead_frame = 0;
     }
 }
 
@@ -33,6 +35,7 @@ void ship_shot_fire(shot_t *shot, ship_t *ship, int shots)
             shot[i].y = ship->y;
             shot[i].alive = 1;
             shot[i].frame = 0;
+            shot[i].dead_frame = 0;
             shot[i].frames = SHIP_SHOT;
             ship->shot_cooldown = 10;
             break;
@@ -57,6 +60,7 @@ void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int
             shot[i].y = enemy[x][y].y;
             shot[i].alive = 1;
             shot[i].frame = 0;
+            shot[i].dead_frame = 0;
             shot[i].dy = ENEMY_SHOT_SPEED + dificulty/4;
             if(enemy[x][y].type == WEAK_ENEMY)
             {
@@ -141,19 +145,22 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enem
             }
             else if(shot[i].frames == MEDIUM_SHOT || shot[i].frames == WEAK_SHOT || shot[i].frames == STRONG_SHOT)
             {
-                if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, ship->x - SHIP_W/2, ship->y - SHIP_H/4, ship->x + SHIP_W/2, ship->y + SHIP_H/2))
+                if(!ship->invincible_timer)
                 {
-                    if(ship->lives > 0)
+                    if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, ship->x - SHIP_W/2, ship->y - SHIP_H/4, ship->x + SHIP_W/2, ship->y + SHIP_H/2))
                     {
-                        if(!ship->invincible_timer)
+                        if(ship->lives > 0)
                         {
                             ship->lives--;
                             ship->respawn_timer = 120;
                             ship->invincible_timer = 120;
-                        }
                             shot[i].alive = 0;
+                        }
                     }
                 }
+                else if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, ship->x - SHIP_W/2 - 2, ship->y - SHIP_H, ship->x + SHIP_W/2 + 2, ship->y + SHIP_H))
+                    shot[i].alive = 0;
+
             }
 
             for(int j = 0; j < OBSTACLE_N; j++)

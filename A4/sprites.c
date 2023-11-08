@@ -22,7 +22,7 @@ void sprites_init(sprites_t *sprites)
         fprintf(stderr, "Error initializing image addon\n");
         exit(1);
     }
-    sprites->sheet = al_load_bitmap("./sprites/spritesheet.png");
+    sprites->sheet = al_load_bitmap("../../../Downloads/spritesheet.png");
     if(!sprites->sheet)
     {
         fprintf(stderr, "Error loading spritesheet\n");
@@ -60,8 +60,10 @@ void sprites_init(sprites_t *sprites)
     sprites->obstacle[3] = sprite_get(sprites->sheet, 320, 32, 23, 17);
     sprites->obstacle[4] = sprite_get(sprites->sheet, 288, 64, 23, 17);
 
-    // sprites->enemy_explosion[0] = sprite_get(sprites->sheet, 0, 288, 32, 32);
-    // sprites->enemy_explosion[1] = sprite_get(sprites->sheet, 32, 288, 32, 32);
+    sprites->enemy_explosion[0] = sprite_get(sprites->sheet, 480, 0, 12, 10);
+    sprites->enemy_explosion[1] = sprite_get(sprites->sheet, 480, 32, 12, 10);
+
+    sprites->shot_explosion = sprite_get(sprites->sheet, 383, 35, 3, 3);
 
     sprites->ship_explosion[0] = sprite_get(sprites->sheet, 230, 12, 19, 9);
     sprites->ship_explosion[1] = sprite_get(sprites->sheet, 198, 43, 19, 9);
@@ -101,8 +103,9 @@ void sprites_deinit(sprites_t *sprites)
     al_destroy_bitmap(sprites->obstacle[3]);
     al_destroy_bitmap(sprites->obstacle[4]);
     
-    // al_destroy_bitmap(sprites->enemy_explosion[0]);
-    // al_destroy_bitmap(sprites->enemy_explosion[1]);
+    al_destroy_bitmap(sprites->enemy_explosion[0]);
+    al_destroy_bitmap(sprites->enemy_explosion[1]);
+    al_destroy_bitmap(sprites->shot_explosion);
     al_destroy_bitmap(sprites->ship_explosion[0]);
     al_destroy_bitmap(sprites->ship_explosion[1]);
     al_destroy_bitmap(sprites->powerup[0]);

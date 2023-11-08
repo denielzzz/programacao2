@@ -20,6 +20,7 @@ typedef struct sprites
     ALLEGRO_BITMAP *obstacle[5];
 
     ALLEGRO_BITMAP *enemy_explosion[2];
+    ALLEGRO_BITMAP *shot_explosion;
     ALLEGRO_BITMAP *ship_explosion[2];
 
     ALLEGRO_BITMAP *powerup[2];
