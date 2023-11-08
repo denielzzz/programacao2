@@ -16,6 +16,7 @@ typedef enum enemy_type
     STRONG_ENEMY = 0,
     MEDIUM_ENEMY,
     WEAK_ENEMY,
+    MOTHER_SHIP,
 } enemy_type_t;
 
 typedef struct enemy
@@ -29,6 +30,12 @@ typedef struct enemy
 
 void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
 
+void mothership_init(enemy_t *mothership);
+
 int enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
+
+void mothership_update(enemy_t *mothership);
+
+int reset_verify(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
 
 #endif

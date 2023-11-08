@@ -40,7 +40,7 @@ void sprites_init(sprites_t *sprites)
     sprites->weak_enemy[0] = sprite_get(sprites->sheet, 32, 0, 12, 8);
     sprites->weak_enemy[1] = sprite_get(sprites->sheet, 32, 32, 12, 8);
 
-    // sprites->mother_ship = sprite_get(sprites->sheet, 0, 128, 32, 32);
+    sprites->mother_ship = sprite_get(sprites->sheet, 416, 0, 16, 7);
 
     sprites->weak_enemy_shot[0] = sprite_get(sprites->sheet, 352, 0, 3, 5);
     sprites->weak_enemy_shot[1] = sprite_get(sprites->sheet, 384, 0, 3, 5);
@@ -66,8 +66,8 @@ void sprites_init(sprites_t *sprites)
     sprites->ship_explosion[0] = sprite_get(sprites->sheet, 230, 12, 19, 9);
     sprites->ship_explosion[1] = sprite_get(sprites->sheet, 198, 43, 19, 9);
 
-    // sprites->powerup[0] = sprite_get(sprites->sheet, 0, 352, 32, 32);
-    // sprites->powerup[1] = sprite_get(sprites->sheet, 32, 352, 32, 32);
+    sprites->powerup[0] = sprite_get(sprites->sheet, 268, 44, 8, 8);
+    sprites->powerup[1] = sprite_get(sprites->sheet, 268, 12, 8, 8);
 
 }
 
@@ -83,7 +83,7 @@ void sprites_deinit(sprites_t *sprites)
     al_destroy_bitmap(sprites->medium_enemy[1]);
     al_destroy_bitmap(sprites->strong_enemy[0]);
     al_destroy_bitmap(sprites->strong_enemy[1]);
-    // al_destroy_bitmap(sprites->mother_ship);
+    al_destroy_bitmap(sprites->mother_ship);
 
     al_destroy_bitmap(sprites->weak_enemy_shot[0]);
     al_destroy_bitmap(sprites->weak_enemy_shot[1]);
@@ -95,16 +95,16 @@ void sprites_deinit(sprites_t *sprites)
     al_destroy_bitmap(sprites->strong_enemy_shot[2]);
     al_destroy_bitmap(sprites->strong_enemy_shot[3]);
 
-    // al_destroy_bitmap(sprites->obstacle[0]);
-    // al_destroy_bitmap(sprites->obstacle[1]);
-    // al_destroy_bitmap(sprites->obstacle[2]);
-    // al_destroy_bitmap(sprites->obstacle[3]);
-    // al_destroy_bitmap(sprites->obstacle[4]);
+    al_destroy_bitmap(sprites->obstacle[0]);
+    al_destroy_bitmap(sprites->obstacle[1]);
+    al_destroy_bitmap(sprites->obstacle[2]);
+    al_destroy_bitmap(sprites->obstacle[3]);
+    al_destroy_bitmap(sprites->obstacle[4]);
     
     // al_destroy_bitmap(sprites->enemy_explosion[0]);
     // al_destroy_bitmap(sprites->enemy_explosion[1]);
     al_destroy_bitmap(sprites->ship_explosion[0]);
     al_destroy_bitmap(sprites->ship_explosion[1]);
-    // al_destroy_bitmap(sprites->powerup[0]);
-    // al_destroy_bitmap(sprites->powerup[1]);
+    al_destroy_bitmap(sprites->powerup[0]);
+    al_destroy_bitmap(sprites->powerup[1]);
 }

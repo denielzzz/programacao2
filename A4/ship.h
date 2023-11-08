@@ -20,8 +20,25 @@ typedef struct ship
     int score;
 } ship_t;
 
+typedef enum powerup_type
+{
+    DOUBLE_SHOT = 0,
+    INVINCIBLE,
+} powerup_type_t;
+
+typedef struct powerup
+{
+    int x, y, dy;
+    int alive;
+    powerup_type_t type;
+} powerup_t;
+
 void ship_init(ship_t *ship);
 
+void powerup_init(powerup_t *powerup);
+
 void ship_update();
+
+void powerup_update(powerup_t *powerup);
 
 #endif

@@ -18,7 +18,8 @@ typedef enum shot_frame_type
 } shot_frame_type_t;
 typedef struct shot
 {
-    int x, y, dy;
+    int x, y;
+    float dy;
     int alive;
     int damage;
     shot_frame_type_t frames;
@@ -31,10 +32,12 @@ void enemy_shot_init(shot_t *shot);
 
 void ship_shot_fire(shot_t *shot, ship_t *ship, int shots);
 
-void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y);
+void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y, int dificulty);
 
 void shot_update(shot_t *shot);
 
-void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], ship_t *ship, obstacle_t *obstacle);
+void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enemy_t *mothership, ship_t *ship, obstacle_t *obstacle);
 
 void shots_collide(shot_t *shot, shot_t *shot2);
+
+void powerup_collide(powerup_t *powerup, ship_t *ship);

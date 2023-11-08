@@ -15,7 +15,6 @@ void enemy_shot_init(shot_t *shot)
 {
     for(int i = 0; i < SHOT_N; i++)
     {
-        shot[i].dy = ENEMY_SHOT_SPEED;
         shot[i].alive = 0;
         shot[i].frame = 0;
     }
@@ -41,7 +40,7 @@ void ship_shot_fire(shot_t *shot, ship_t *ship, int shots)
     }
 }
 
-void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y)
+void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y, int dificulty)
 {
     if(enemy[x][y].type != STRONG_ENEMY)
     {
@@ -58,6 +57,7 @@ void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int
             shot[i].y = enemy[x][y].y;
             shot[i].alive = 1;
             shot[i].frame = 0;
+            shot[i].dy = ENEMY_SHOT_SPEED + dificulty/4;
             if(enemy[x][y].type == WEAK_ENEMY)
             {
                 shot[i].frames = WEAK_SHOT;
@@ -73,8 +73,8 @@ void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int
                 shot[i].frames = STRONG_SHOT;
                 shot[i].damage = 2;
             }
-            if(i > 0 && ((shot[i].x - ENEMY_W/2 >= shot[i-1].x && shot[i].x + ENEMY_W/2 <= shot[i-1].x) 
-            || (shot[i].x - ENEMY_W/2 <= shot[i-1].x && shot[i].x + ENEMY_W/2 >= shot[i-1].x)))
+            if(i > 0 && ((shot[i].x - ENEMY_W*2 >= shot[i-1].x && shot[i].x + ENEMY_W*2 <= shot[i-1].x) 
+            || (shot[i].x - ENEMY_W*2 <= shot[i-1].x && shot[i].x + ENEMY_W*2 >= shot[i-1].x)))
                 shot[i].alive = 0;
             break;
         }
@@ -109,7 +109,7 @@ int collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int b
     return 1;
 }
 
-void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], ship_t *ship, obstacle_t *obstacle)
+void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enemy_t *mothership, ship_t *ship, obstacle_t *obstacle)
 {
     for(int i = 0; i < SHOT_N; i++)
     {
@@ -131,6 +131,12 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], ship
                             }
                         }
                     }
+                }
+                if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, mothership->x - ENEMY_W/2, mothership->y - ENEMY_H/2, mothership->x + ENEMY_W/2, mothership->y + 3))
+                {
+                    mothership->alive = 0;
+                    shot[i].alive = 0;
+                    ship->score += mothership->score;
                 }
             }
             else if(shot[i].frames == MEDIUM_SHOT || shot[i].frames == WEAK_SHOT || shot[i].frames == STRONG_SHOT)
@@ -185,5 +191,17 @@ void shots_collide(shot_t *shot, shot_t *shot2)
                 }
             }
         }
+    }
+}
+
+void powerup_collide(powerup_t *powerup, ship_t *ship)
+{
+    if(collide(powerup->x - SHIP_W/2, powerup->y - SHIP_H/2, powerup->x + SHIP_W/2, powerup->y + 3, ship->x - SHIP_W/2, ship->y - SHIP_H/2, ship->x + SHIP_W/2, ship->y + SHIP_H/2))
+    {
+        powerup->alive = 0;
+        if(powerup->type == DOUBLE_SHOT)
+            ship->double_shot_timer = 600;
+        else if(powerup->type == INVINCIBLE)
+            ship->invincible_timer = 300;
     }
 }

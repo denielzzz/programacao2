@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "stdlib.h"
 
 void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
 {
@@ -8,7 +9,7 @@ void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
         {
             enemy[i][j].type = (enemy_type_t) (i+1)/2;
             enemy[i][j].x = BUFFER_W/7 + (j+1) * BUFFER_W/ENEMY_COLUNS*2/3;
-            enemy[i][j].y = BUFFER_H/20 + (i+1) * BUFFER_H/ENEMY_LINES/3;
+            enemy[i][j].y = BUFFER_H/7 + (i+1) * BUFFER_H/ENEMY_LINES/3;
             enemy[i][j].alive = 1;
             enemy[i][j].dx = ENEMY_SPEED;
             enemy[i][j].frame = 0;
@@ -20,6 +21,27 @@ void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
                 enemy[i][j].score = 10;
         }
     }
+}
+
+void mothership_init(enemy_t *mothership)
+{
+    if(mothership->alive)
+        return;
+    mothership->type = MOTHER_SHIP;
+    if(rand()%2)
+    {
+        mothership->x = BUFFER_W + 8;
+        mothership->dx = -1;
+    }
+    else
+    {
+        mothership->x = 0 - 8;
+        mothership->dx = 1;
+    }
+    mothership->y = BUFFER_H/7;
+    mothership->alive = 1;
+    mothership->frame = 0;
+    mothership->score = (rand()%8 + 1)*100;
 }
 
 int enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
@@ -64,4 +86,26 @@ int enemies_update(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
         }
     }
     return 0;
+}
+
+void mothership_update(enemy_t *mothership)
+{
+    if(!mothership->alive)
+        return;
+    mothership->x += mothership->dx;
+    if(mothership->x < -9 || mothership->x > BUFFER_W + 8)
+        mothership->alive = 0;
+}
+
+int reset_verify(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS])
+{
+    for(int i = 0; i < ENEMY_LINES; i++)
+    {
+        for(int j = 0; j < ENEMY_COLUNS; j++)
+        {
+            if(enemy[i][j].alive)
+                return 0;
+        }
+    }
+    return 1;
 }
