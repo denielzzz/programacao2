@@ -8,10 +8,10 @@ void ship_init(ship_t *ship)
     ship->dx = 0;
     ship->lives = 3;
     ship->respawn_timer = 0;
-    ship->invincible_timer = 60000;
+    ship->invincible_timer = 60;
     ship->double_shot_timer = 0;
     ship->frame = 0;
-    ship->shot_cooldown = 30;
+    ship->shot_cooldown = 10;
     ship->score = 0;
 }
 
@@ -22,7 +22,9 @@ void powerup_init(powerup_t *powerup)
     powerup->alive = 1;
     powerup->y = -5;
     powerup->dy = 1;
+    // escolhe uma coluna aleatória para o powerup aparecer
     powerup->x = rand()%(BUFFER_W - 2*SHIP_W) + SHIP_W;
+    // escolhe aleatóriamente um dos tipo para o powerup
     powerup->type = rand()%2;
 }
 

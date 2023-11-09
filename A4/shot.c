@@ -22,38 +22,39 @@ void enemy_shot_init(shot_t *shot)
     }
 }
 
-void ship_shot_fire(shot_t *shot, ship_t *ship, int shots)
+int ship_shot_fire(shot_t *shot, ship_t *ship)
 {
-    if(ship->respawn_timer)
-        return;
+    if(!ship->lives)
+        return 0;
 
-    for(int i = 0; i < shots; i++)
+    if(!shot->alive)
     {
-        if(!shot[i].alive)
-        {
-            shot[i].x = ship->x;
-            shot[i].y = ship->y;
-            shot[i].alive = 1;
-            shot[i].frame = 0;
-            shot[i].dead_frame = 0;
-            shot[i].frames = SHIP_SHOT;
-            ship->shot_cooldown = 10;
-            break;
-        }
+        shot->x = ship->x;
+        shot->y = ship->y;
+        shot->alive = 1;
+        shot->frame = 0;
+        shot->dead_frame = 0;
+        shot->frames = SHIP_SHOT;
+        ship->shot_cooldown = 10;
     }
+    else
+        return 0;
+    return 1;
 }
 
-void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y, int dificulty)
+int enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y, int dificulty)
 {
+    // retorna 0 se o inimigo for do tipo fraco ou médio e tiver um inimigo a sua frente
     if(enemy[x][y].type != STRONG_ENEMY)
     {
         for(int i = x+1; i < ENEMY_LINES; i++)
             if(enemy[i][y].alive)    
-                return;
+                return 0;
     }
 
     for(int i = 0; i < SHOT_N; i++)
     {
+        // verifica se o tiro está disponivel
         if(!shot[i].alive)
         {
             shot[i].x = enemy[x][y].x;
@@ -61,6 +62,7 @@ void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int
             shot[i].alive = 1;
             shot[i].frame = 0;
             shot[i].dead_frame = 0;
+            // aumenta a velocidade do tiro de acordo com a dificuldade
             shot[i].dy = ENEMY_SHOT_SPEED + dificulty/4;
             if(enemy[x][y].type == WEAK_ENEMY)
             {
@@ -77,12 +79,17 @@ void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int
                 shot[i].frames = STRONG_SHOT;
                 shot[i].damage = 2;
             }
+            // retorna 0 se já existir um tiro na mesma coluna
             if(i > 0 && ((shot[i].x - ENEMY_W*2 >= shot[i-1].x && shot[i].x + ENEMY_W*2 <= shot[i-1].x) 
             || (shot[i].x - ENEMY_W*2 <= shot[i-1].x && shot[i].x + ENEMY_W*2 >= shot[i-1].x)))
+            {
                 shot[i].alive = 0;
-            break;
+                return 0;
+            }
+            return 1;
         }
     }
+    return 0;
 }
 
 void shot_update(shot_t *shot)
@@ -92,7 +99,7 @@ void shot_update(shot_t *shot)
         if(shot[i].alive)
         {
             shot[i].y += shot[i].dy;
-
+            // faz a animação do tiro conforme o tipo
             if(shot[i].frame < (int)shot[i].frames*5-1)
                 shot[i].frame++;
             else
@@ -106,8 +113,10 @@ void shot_update(shot_t *shot)
     }
 }
 
+// retorna 1 se houve colisão, 0 caso contrário
 int collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
 {
+    // verifica os casos em que não há colisão
     if(ax1 > bx2 || ax2 < bx1 || ay1 > by2 || ay2 < by1) 
         return 0;
     return 1;
@@ -119,6 +128,7 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enem
     {
         if(shot[i].alive)
         {
+            // verifica se o tiro da nave colidiu com algum inimigo
             if(shot[i].frames == SHIP_SHOT)
             {
                 for(int j = 0; j < ENEMY_LINES; j++)
@@ -136,6 +146,7 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enem
                         }
                     }
                 }
+                // verifica se o tiro da nave colidiu com a nave mãe
                 if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, mothership->x - ENEMY_W/2, mothership->y - ENEMY_H/2, mothership->x + ENEMY_W/2, mothership->y + 3))
                 {
                     mothership->alive = 0;
@@ -143,6 +154,7 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enem
                     ship->score += mothership->score;
                 }
             }
+            // verifica se o tiro de algum inimigo colidiu com a nave
             else if(shot[i].frames == MEDIUM_SHOT || shot[i].frames == WEAK_SHOT || shot[i].frames == STRONG_SHOT)
             {
                 if(!ship->invincible_timer)
@@ -162,14 +174,14 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enem
                     shot[i].alive = 0;
 
             }
-
+            // verifica se algum tiro colidiu com algum obstáculo
             for(int j = 0; j < OBSTACLE_N; j++)
             {
                 if(obstacle[j].life > 0)
                 {
-                    if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, obstacle[j].x - OBSTACLE_W/2, obstacle[j].y - OBSTACLE_H/2, obstacle[j].x - OBSTACLE_W/6, obstacle[j].y + OBSTACLE_H/3)
-                    || collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, obstacle[j].x - OBSTACLE_W/6, obstacle[j].y - OBSTACLE_H/2, obstacle[j].x + OBSTACLE_W/6, obstacle[j].y - OBSTACLE_H/6)
-                    || collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, obstacle[j].x + OBSTACLE_W/6, obstacle[j].y - OBSTACLE_H/2, obstacle[j].x + OBSTACLE_W/2, obstacle[j].y + OBSTACLE_H/3))                    
+                    if(collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, obstacle[j].x - OBSTACLE_W/2, obstacle[j].y - OBSTACLE_H/2, obstacle[j].x - OBSTACLE_W/6, obstacle[j].y + OBSTACLE_H/3 + 3)
+                    || collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, obstacle[j].x - OBSTACLE_W/6, obstacle[j].y - OBSTACLE_H/2, obstacle[j].x + OBSTACLE_W/6, obstacle[j].y - OBSTACLE_H/6 + 3)
+                    || collide(shot[i].x - SHOT_W/2, shot[i].y - SHOT_H/2, shot[i].x + SHOT_W/2, shot[i].y + SHOT_H/2, obstacle[j].x + OBSTACLE_W/6, obstacle[j].y - OBSTACLE_H/2, obstacle[j].x + OBSTACLE_W/2, obstacle[j].y + OBSTACLE_H/3 + 3))                    
                     {
                         obstacle[j].life -= shot[i].damage;
                         shot[i].alive = 0;
@@ -180,6 +192,7 @@ void collide_update(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], enem
     }
 }
 
+// verifica se dois tiros colidiram
 void shots_collide(shot_t *shot, shot_t *shot2)
 {
     for(int i = 0; i < SHOT_N; i++)
@@ -201,6 +214,7 @@ void shots_collide(shot_t *shot, shot_t *shot2)
     }
 }
 
+// verifica se a nave colidiu com algum powerup
 void powerup_collide(powerup_t *powerup, ship_t *ship)
 {
     if(collide(powerup->x - SHIP_W/2, powerup->y - SHIP_H/2, powerup->x + SHIP_W/2, powerup->y + 3, ship->x - SHIP_W/2, ship->y - SHIP_H/2, ship->x + SHIP_W/2, ship->y + SHIP_H/2))

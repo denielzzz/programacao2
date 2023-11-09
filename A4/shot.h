@@ -23,7 +23,9 @@ typedef struct shot
     int alive;
     int damage;
     shot_frame_type_t frames;
+    // para animação do tiro
     int frame;
+    // para animação da explosão do tiro
     int dead_frame;
 } shot_t;
 
@@ -31,9 +33,11 @@ void ship_shot_init(shot_t *shot);
 
 void enemy_shot_init(shot_t *shot);
 
-void ship_shot_fire(shot_t *shot, ship_t *ship, int shots);
+// retorna 1 se o tiro foi disparado, 0 caso contrário
+int ship_shot_fire(shot_t *shot, ship_t *ship);
 
-void enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y, int dificulty);
+// retorna 1 se o tiro foi disparado, 0 caso contrário
+int enemy_shot_fire(shot_t *shot, enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS], int x, int y, int dificulty);
 
 void shot_update(shot_t *shot);
 

@@ -1,12 +1,12 @@
 #include "config.h"
 #define STARS_N ((BUFFER_W / 2) - 1)
 
-typedef struct STAR
+typedef struct star
 {
     float y;
     float speed;
-} STAR;
+} star_t;
 
-void stars_init(STAR* stars);
+void stars_init(star_t* stars);
 
-void stars_update(STAR* stars);
+void stars_update(star_t* stars);

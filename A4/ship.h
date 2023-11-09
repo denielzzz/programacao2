@@ -37,7 +37,7 @@ void ship_init(ship_t *ship);
 
 void powerup_init(powerup_t *powerup);
 
-void ship_update();
+void ship_update(ship_t *ship);
 
 void powerup_update(powerup_t *powerup);
 

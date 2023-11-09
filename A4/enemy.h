@@ -26,6 +26,8 @@ typedef struct enemy
     int alive;
     int frame;
     int score;
+    // usado para saber se o som de morte do inimigo já foi tocado
+    int sound;
 } enemy_t;
 
 void enemies_init(enemy_t enemy[ENEMY_LINES][ENEMY_COLUNS]);
