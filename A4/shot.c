@@ -217,7 +217,7 @@ void shots_collide(shot_t *shot, shot_t *shot2)
 // verifica se a nave colidiu com algum powerup
 void powerup_collide(powerup_t *powerup, ship_t *ship)
 {
-    if(collide(powerup->x - SHIP_W/2, powerup->y - SHIP_H/2, powerup->x + SHIP_W/2, powerup->y + 3, ship->x - SHIP_W/2, ship->y - SHIP_H/2, ship->x + SHIP_W/2, ship->y + SHIP_H/2))
+    if(collide(powerup->x - SHIP_W/2, powerup->y - SHIP_H/2, powerup->x + SHIP_W/2, powerup->y, ship->x - SHIP_W/2, ship->y - SHIP_H/2, ship->x + SHIP_W/2, ship->y + SHIP_H/2))
     {
         powerup->alive = 0;
         if(powerup->type == DOUBLE_SHOT)

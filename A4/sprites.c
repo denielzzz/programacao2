@@ -69,8 +69,8 @@ void sprites_init(sprites_t *sprites)
     sprites->ship_explosion[0] = sprite_get(sprites->sheet, 230, 12, 19, 9);
     sprites->ship_explosion[1] = sprite_get(sprites->sheet, 198, 43, 19, 9);
 
-    sprites->powerup[0] = sprite_get(sprites->sheet, 268, 44, 8, 8);
-    sprites->powerup[1] = sprite_get(sprites->sheet, 268, 12, 8, 8);
+    sprites->powerup[0] = sprite_get(sprites->sheet, 268, 44, 7, 7);
+    sprites->powerup[1] = sprite_get(sprites->sheet, 268, 12, 7, 7);
 
 }
 

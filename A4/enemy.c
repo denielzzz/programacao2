@@ -100,7 +100,7 @@ void mothership_update(enemy_t *mothership)
         return;
     mothership->x += mothership->dx;
     // verifica se a nave mãe colidiu com algum limite da tela
-    if(mothership->x < -9 || mothership->x > BUFFER_W + 8)
+    if(mothership->x < -15 || mothership->x > BUFFER_W + 15)
         mothership->alive = 0;
 }
 

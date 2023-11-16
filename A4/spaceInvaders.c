@@ -486,11 +486,11 @@ int main()
             else
             {
                 stars_draw(stars);
-                powerup_draw(&powerup, &sprites);
                 ship_draw(&ship, &sprites, pause, sample_explode);
+                obstacle_draw(obstacle, &sprites);
+                powerup_draw(&powerup, &sprites);
                 enemies_draw(enemy, &sprites, pause, sample_explode);
                 mothership_draw(&mothership, &sprites, sample_explode, small_font);
-                obstacle_draw(obstacle, &sprites);
                 shot_draw(enemy_shot, &sprites, pause);
                 shot_draw(ship_shot, &sprites, pause);
                 hud_draw(ship.score, ship.lives, &sprites, small_font);
